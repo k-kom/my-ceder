@@ -58,3 +58,14 @@ JNI のロード失敗などの JVM エラーも呼び出し元に伝播しま�
 最小構成のため、ポリシーの永続化・管理 UI・スキーマ検証は含みません。
 認可エンジンは遅延初期化して再利用し、ポリシーとエンティティは呼び出しごとにパースします。
 認証済みユーザーと信頼できる保存先から principal・属性・ポリシーを組み立ててください。
+
+## Tutorial examples
+
+`resources/tutorial/` contains tutorial steps 01–10 copied from the local
+`cedar-website` checkout. Step 10 has separate files for its two static policies,
+template, and instantiated policy. `my-cedar.main/tutorial-results` authorizes
+each example and links the template using cedar-java. `authorize` also accepts a
+Java `PolicySet` as its first argument to support template-linked policies.
+
+`clojure -M:run` prints all decisions; step 02 intentionally returns `deny`.
+See `resources/tutorial/README.md` for source details and sample data provenance.

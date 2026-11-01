@@ -1,0 +1,110 @@
+{
+  "PhotoApp": {
+    "commonTypes": {
+      "PersonType": {
+        "type": "Record",
+        "attributes": {
+          "age": {
+            "type": "Long"
+          },
+          "name": {
+            "type": "String"
+          }
+        }
+      },
+      "ContextType": {
+        "type": "Record",
+        "attributes": {
+          "ip": {
+            "type": "Extension",
+            "name": "ipaddr"
+          }
+        }
+      }
+    },
+    "entityTypes": {
+      "User": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "employeeId": {
+              "type": "String",
+              "required": true
+            },
+            "personInfo": {
+              "type": "PersonType"
+            }
+          }
+        },
+        "memberOfTypes": [
+          "UserGroup"
+        ]
+      },
+      "UserGroup": {
+        "shape": {
+          "type": "Record",
+          "attributes": {}
+        }
+      },
+      "Photo": {
+        "shape": {
+          "type": "Record",
+          "attributes": {}
+        },
+        "memberOfTypes": [
+          "Album"
+        ]
+      },
+      "Album": {
+        "shape": {
+          "type": "Record",
+          "attributes": {}
+        }
+      }
+    },
+    "actions": {
+      "viewPhoto": {
+        "appliesTo": {
+          "principalTypes": [
+            "User",
+            "UserGroup"
+          ],
+          "resourceTypes": [
+            "Photo"
+          ],
+          "context": {
+            "type": "ContextType"
+          }
+        }
+      },
+      "createPhoto": {
+        "appliesTo": {
+          "principalTypes": [
+            "User",
+            "UserGroup"
+          ],
+          "resourceTypes": [
+            "Photo"
+          ],
+          "context": {
+            "type": "ContextType"
+          }
+        }
+      },
+      "listPhotos": {
+        "appliesTo": {
+          "principalTypes": [
+            "User",
+            "UserGroup"
+          ],
+          "resourceTypes": [
+            "Photo"
+          ],
+          "context": {
+            "type": "ContextType"
+          }
+        }
+      }
+    }
+  }
+}

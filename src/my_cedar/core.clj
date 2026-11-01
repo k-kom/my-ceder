@@ -30,16 +30,18 @@
   (.readValue (CedarJson/objectReader) ^String (json/write-str context) Value))
 
 (defn authorize
-  "Evaluate Cedar policy text, entity maps and a principal/action/resource request.
+  "Evaluate Cedar policy text or a Java PolicySet, entity maps and a principal/action/resource request.
   Optional :context is a map. Returns {:decision :allow|:deny}.
   Parsing and evaluation failures throw ExceptionInfo; JNI loading errors propagate."
   [policies entities request]
-  (when-not (and (string? policies) (sequential? entities)
+  (when-not (and (or (string? policies) (instance? PolicySet policies)) (sequential? entities)
                  (map? request) (every? #(contains? request %) [:principal :action :resource])
                  (map? (get request :context {})))
-    (throw (ex-info "Expected policy text, entity sequence and principal/action/resource request with map context" {})))
+    (throw (ex-info "Expected policy text or PolicySet, entity sequence and principal/action/resource request with map context" {})))
   (try
-    (let [policy-set (PolicySet/parsePolicies policies)
+    (let [policy-set (if (instance? PolicySet policies)
+                       policies
+                       (PolicySet/parsePolicies ^String policies))
           entity-set (Entities/parse (json/write-str entities))
           auth-request (AuthorizationRequest.
                         (java-uid (:principal request))

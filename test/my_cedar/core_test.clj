@@ -60,3 +60,28 @@
                   (str "permit(principal, action, resource);"
                        "forbid(principal, action, resource) when { context.missing };")
                   [] (example/request "alice"))))))
+
+(deftest tutorial-authorization-test
+  (let [results (example/tutorial-results)]
+    (is (= (set (range 1 11)) (set (map :step results))))
+    (doseq [{:keys [name decision expected]} results]
+      (testing name (is (= expected decision))))))
+
+(deftest tutorial-denial-test
+  (doseq [{:keys [name policy entities request]} (example/tutorial-examples)]
+    (testing (str name " rejects an action outside the policy scope")
+      (is (false? (cedar/allowed?
+                   (slurp (clojure.java.io/resource (str "tutorial/" policy)))
+                   entities
+                   (assoc request :action (cedar/entity "Action" "notAllowed"))))))))
+
+(deftest tutorial-template-link-test
+  (let [policy (example/tutorial-template)
+        request {:principal (cedar/entity "User" "alice")
+                 :action (cedar/entity "Action" "writeFile")
+                 :resource (cedar/entity "Photo" "pic.jpg")}]
+    (is (cedar/allowed? policy [] request))
+    (is (false? (cedar/allowed? policy []
+                                (assoc request :principal (cedar/entity "User" "bob")))))
+    (is (false? (cedar/allowed? policy []
+                                (assoc request :resource (cedar/entity "Photo" "other.jpg")))))))

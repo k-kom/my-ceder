@@ -1,0 +1,381 @@
+[
+  {
+    "step": 1,
+    "name": "01-policy-structure",
+    "policy": "01-policy-structure.cedar",
+    "entities": [],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "alice"
+      },
+      "action": {
+        "type": "Action",
+        "id": "update"
+      },
+      "resource": {
+        "type": "Photo",
+        "id": "VacationPhoto94.jpg"
+      },
+      "context": {}
+    },
+    "expected": "allow"
+  },
+  {
+    "step": 2,
+    "name": "02-forbid",
+    "policy": "02-forbid.cedar",
+    "entities": [],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "alice"
+      },
+      "action": {
+        "type": "Action",
+        "id": "view"
+      },
+      "resource": {
+        "type": "Photo",
+        "id": "VacationPhoto94.jpg"
+      },
+      "context": {}
+    },
+    "expected": "deny"
+  },
+  {
+    "step": 3,
+    "name": "03-sets",
+    "policy": "03-sets.cedar",
+    "entities": [],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "alice"
+      },
+      "action": {
+        "type": "Action",
+        "id": "view"
+      },
+      "resource": {
+        "type": "Photo",
+        "id": "VacationPhoto94.jpg"
+      },
+      "context": {}
+    },
+    "expected": "allow"
+  },
+  {
+    "step": 4,
+    "name": "04-undefined-scope",
+    "policy": "04-undefined-scope.cedar",
+    "entities": [],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "alice"
+      },
+      "action": {
+        "type": "Action",
+        "id": "view"
+      },
+      "resource": {
+        "type": "Photo",
+        "id": "vacationPhoto.jpg"
+      },
+      "context": {}
+    },
+    "expected": "allow"
+  },
+  {
+    "step": 5,
+    "name": "05-rbac",
+    "policy": "05-rbac.cedar",
+    "entities": [
+      {
+        "uid": {
+          "type": "User",
+          "id": "Bob"
+        },
+        "attrs": {},
+        "parents": [
+          {
+            "type": "Role",
+            "id": "vacationPhotoJudges"
+          },
+          {
+            "type": "Role",
+            "id": "juniorPhotographerJudges"
+          }
+        ]
+      },
+      {
+        "uid": {
+          "type": "Role",
+          "id": "vacationPhotoJudges"
+        },
+        "attrs": {},
+        "parents": []
+      },
+      {
+        "uid": {
+          "type": "Role",
+          "id": "juniorPhotographerJudges"
+        },
+        "attrs": {},
+        "parents": []
+      }
+    ],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "Bob"
+      },
+      "action": {
+        "type": "Action",
+        "id": "view"
+      },
+      "resource": {
+        "type": "Photo",
+        "id": "vacationPhoto94.jpg"
+      },
+      "context": {}
+    },
+    "expected": "allow"
+  },
+  {
+    "step": 6,
+    "name": "06-abac-pt1",
+    "policy": "06-abac-pt1.cedar",
+    "entities": [
+      {
+        "uid": {
+          "type": "Photo",
+          "id": "VacationPhoto94.jpg"
+        },
+        "attrs": {
+          "accessLevel": "public"
+        },
+        "parents": []
+      },
+      {
+        "uid": {
+          "type": "User",
+          "id": "alice"
+        },
+        "attrs": {
+          "location": "USA"
+        },
+        "parents": []
+      }
+    ],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "alice"
+      },
+      "action": {
+        "type": "Action",
+        "id": "view"
+      },
+      "resource": {
+        "type": "Photo",
+        "id": "VacationPhoto94.jpg"
+      },
+      "context": {}
+    },
+    "expected": "allow"
+  },
+  {
+    "step": 7,
+    "name": "07-abac-pt2",
+    "policy": "07-abac-pt2.cedar",
+    "entities": [
+      {
+        "uid": {
+          "type": "Photo",
+          "id": "VacationPhoto94.jpg"
+        },
+        "attrs": {
+          "dept": "cosmic",
+          "owner": "alice"
+        },
+        "parents": []
+      },
+      {
+        "uid": {
+          "type": "User",
+          "id": "alice"
+        },
+        "attrs": {
+          "id": "alice",
+          "dept": "chaos"
+        },
+        "parents": []
+      }
+    ],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "alice"
+      },
+      "action": {
+        "type": "Action",
+        "id": "view"
+      },
+      "resource": {
+        "type": "Photo",
+        "id": "VacationPhoto94.jpg"
+      },
+      "context": {}
+    },
+    "expected": "allow"
+  },
+  {
+    "step": 8,
+    "name": "08-context",
+    "policy": "08-context.cedar",
+    "entities": [],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "alice"
+      },
+      "action": {
+        "type": "Action",
+        "id": "update"
+      },
+      "resource": {
+        "type": "Photo",
+        "id": "flower.jpg"
+      },
+      "context": {
+        "mfa_authenticated": true,
+        "request_client_ip": "222.222.222.222",
+        "oidc_scope": "profile"
+      }
+    },
+    "expected": "allow"
+  },
+  {
+    "step": 9,
+    "name": "09-schema",
+    "policy": "09-schema.cedar",
+    "entities": [
+      {
+        "uid": {
+          "type": "PhotoApp::User",
+          "id": "alice"
+        },
+        "attrs": {
+          "employeeId": "alice",
+          "personInfo": {
+            "age": 30,
+            "name": "Alice"
+          }
+        },
+        "parents": [
+          {
+            "type": "PhotoApp::UserGroup",
+            "id": "janeFriends"
+          }
+        ]
+      },
+      {
+        "uid": {
+          "type": "PhotoApp::Photo",
+          "id": "trip.jpg"
+        },
+        "attrs": {},
+        "parents": [
+          {
+            "type": "PhotoApp::Album",
+            "id": "janeTrips"
+          }
+        ]
+      }
+    ],
+    "request": {
+      "principal": {
+        "type": "PhotoApp::User",
+        "id": "alice"
+      },
+      "action": {
+        "type": "PhotoApp::Action",
+        "id": "viewPhoto"
+      },
+      "resource": {
+        "type": "PhotoApp::Photo",
+        "id": "trip.jpg"
+      },
+      "context": {}
+    },
+    "expected": "allow"
+  },
+  {
+    "step": 10,
+    "name": "10-01-static-alice",
+    "policy": "10-01-static-alice.cedar",
+    "entities": [],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "973db890-092c-49e4-a9d0-912a4c0a20c7"
+      },
+      "action": {
+        "type": "Action",
+        "id": "readFile"
+      },
+      "resource": {
+        "type": "Folder",
+        "id": "4e153865-0b24-4b77-94f7-9a7f24fa8a59"
+      },
+      "context": {}
+    },
+    "expected": "allow"
+  },
+  {
+    "step": 10,
+    "name": "10-02-static-bob",
+    "policy": "10-02-static-bob.cedar",
+    "entities": [],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "aa72347c-0f07-4015-b23c-551bab7371bb"
+      },
+      "action": {
+        "type": "Action",
+        "id": "readFile"
+      },
+      "resource": {
+        "type": "Folder",
+        "id": "d5cf9de7-8f10-452b-9aef-a3b735da47ef"
+      },
+      "context": {}
+    },
+    "expected": "allow"
+  },
+  {
+    "step": 10,
+    "name": "10-04-instantiated",
+    "policy": "10-04-instantiated.cedar",
+    "entities": [],
+    "request": {
+      "principal": {
+        "type": "User",
+        "id": "alice"
+      },
+      "action": {
+        "type": "Action",
+        "id": "readFile"
+      },
+      "resource": {
+        "type": "Photo",
+        "id": "pic.jpg"
+      },
+      "context": {}
+    },
+    "expected": "allow"
+  }
+]
